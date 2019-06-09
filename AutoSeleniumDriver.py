@@ -47,7 +47,7 @@ def _get_new_chrome_driver_url(chrome_version):
 
         # 倒数第二级小版本(还可以优化)
         chrome_version = ".".join(chrome_version.split(".")[0:-1])
-        for u in BeautifulSoup(res.text, "lxml").find_all("a"):
+        for u in BeautifulSoup(res.text).find_all("a"):
             if chrome_version in u.text:
                 urls.append(url.split("/mirrors/chromedriver")[0]+u["href"])
 
@@ -136,22 +136,40 @@ def _init_libs():
     print("初始化环境结束")
 
 
-if __name__ == "__main__":
-    # 判断系统版本
-    if "win32" != sys.platform:
-        print("当前只支持Windows版本哦~")
-        exit(0)
+def _eg():
+    print("参数错误，参考脚本用法:")
+    print("     谷歌: python AutoSeleniumDriver.py -b chrome")
+    print("     火狐: python AutoSeleniumDriver.py -b firefox ")
+    print("     I E: python AutoSeleniumDriver.py -b ie ")
+    exit(0)
 
-    # 初始化环境
-    print("****"*10)
-    _init_libs()
-    print("****"*10)
 
-    # 导入依赖库
-    print("导入各项依赖库")
-    import requests
-    from bs4 import BeautifulSoup
+def _main():
+    if len(sys.argv) == 1:
+        arg = "-h"
+    else:
+        arg = sys.argv.pop(1).lower()
+    
+    if arg != "-h" and arg != "-b":
+        _eg()
 
+    if arg == "-h":
+        _eg()
+
+    if arg == "-b":
+        try:
+            browser = sys.argv[1].lower().strip()
+            if browser!= "chrome" and browser != "firefox" and browser != "ie":
+                raise Exception("输入的参数不正确")
+            else:
+                return browser
+        except:
+            _eg()
+ 
+def _chromedriver_downloader():
+    """
+        谷歌驱动下载
+    """
     # 获取chrome安装版本
     print("****"*10)
     chrome_version = _get_chrome_version()
@@ -184,3 +202,46 @@ if __name__ == "__main__":
         _download_file(max_chromedriver_url)
 
     print("****"*10)
+
+
+def _firefox_downloader():
+    """
+        火狐驱动下载
+    """
+    print("即将开发...")
+
+def _internet_explorer_downloader():
+    """
+        ie驱动下载
+    """
+    print("即将开发...")
+
+
+if __name__ == "__main__":
+    
+    brower = _main()
+
+    # 判断系统版本
+    if "win32" != sys.platform:
+        print("当前只支持Windows版本哦~")
+        exit(0)
+
+    # 初始化环境
+    print("****"*10)
+    _init_libs()
+    print("****"*10)
+
+    # 导入依赖库
+    print("导入各项依赖库")
+    import requests
+    from bs4 import BeautifulSoup
+
+    # 根据不同的浏览器去下载驱动
+    if brower == "chrome":
+        _chromedriver_downloader()
+    if brower == "firefox":
+        _firefox_downloader()
+    if brower == "ie":
+        _internet_explorer_downloader()
+
+ 
