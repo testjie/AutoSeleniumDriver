@@ -1,11 +1,22 @@
 # -*- conding:utf-8 -*-
 __author__ = "snake"
 
+"""
+    github: https://github.com/testjie/AutoSeleniumDriver.git
+"""
+
 import os
 import re
 import sys
 import winreg
+import platform
 
+
+def _get_windows_bit():
+    """
+        获取Windows系统位数
+    """
+    return platform.architecture()[0].split("bit")[0]
 
 def _get_chrome_version():
     """
@@ -32,7 +43,6 @@ def _get_chrome_version():
             print("找到Chrome浏览器，版本号为:{}".format(value))
             return value
 
-
 def _get_new_chrome_driver_url(chrome_version):
     """
         获取chrome70以上的chrome driver下载链接
@@ -56,7 +66,6 @@ def _get_new_chrome_driver_url(chrome_version):
     # 刚好碰巧遇到这个版本 666
     else:
         return url
-
 
 def _get_old_chrome_driver_url(chrome_version):
     """
@@ -82,7 +91,6 @@ def _get_old_chrome_driver_url(chrome_version):
 
     return 0
 
-
 def _get_max_driver_version(urls=[]):
     """
         获取最大的driver版本
@@ -106,20 +114,28 @@ def _get_max_driver_version(urls=[]):
 
     return 0
 
-
-def _download_file(url):
+def _download_file(url, browser="ch"):
     """
         下载文件
     """
-    print("开始下载ChromeDriver")
+    if browser == "ch":
+        drivername = "谷歌浏览器驱动"
+        file_name = "./chromedriver.zip"
+    if browser == "ff":
+        drivername = "火狐浏览器驱动"
+        file_name = "./geckodriver.zip"
+    if browser == "ie":
+        drivername = "IE浏览器驱动"
+        file_name = "./iedriver.zip"
+
+    print("开始下载{}".format(drivername))
     try:
         r = requests.get(url=url) 
-        with open("./chromedriver_win32.zip", "wb") as file:
+        with open(file_name, "wb") as file:
             file.write(r.content)
-            print("下载成功,ChromeDriver保存在:{}".format(os.getcwd()+"\\chromedriver_win32.zip"))
+            print("下载成功,{}保存在:{}".format(drivername, os.getcwd()+"\\"+file_name+".zip"))
     except:
-        print("下载失败!")
-
+        print("下载失败，请复制上面的驱动地址手动下载!")
 
 def _init_libs():
     """
@@ -130,19 +146,20 @@ def _init_libs():
     libs = ["requests", "beautifulsoup4", "lxml"]
     for lib in libs:
         print("开始安装依赖库:{}".format(lib))
-        os.system("pip3 install {}".format(lib))
+        os.system("pip3 install {} -i https://pypi.tuna.tsinghua.edu.cn/simple".format(lib))
         print("=="*10)
 
     print("初始化环境结束")
 
-
 def _eg():
+    """
+        选择输出
+    """
     print("参数错误，参考脚本用法:")
     print("     谷歌: python AutoSeleniumDriver.py -b chrome")
     print("     火狐: python AutoSeleniumDriver.py -b firefox ")
     print("     I E: python AutoSeleniumDriver.py -b ie ")
     exit(0)
-
 
 def _main():
     if len(sys.argv) == 1:
@@ -203,12 +220,21 @@ def _chromedriver_downloader():
 
     print("****"*10)
 
-
 def _firefox_downloader():
     """
         火狐驱动下载
     """
-    print("即将开发...")
+    bit = _get_windows_bit()
+    print("当前Windows版本为64位")
+
+    res = requests.get("https://github.com/mozilla/geckodriver/releases")
+    geckodrivers = re.findall("geckodriver-v(.*?)-win{}.zip".format(bit), res.text)
+
+    maxversion_geckodriver_url = "https://github.com/mozilla/geckodriver/releases/download/v{}/geckodriver-v{}-win{}.zip".format(geckodrivers[0], geckodrivers[0], bit)
+    print("找到geckodriver，地址为：{}".format(maxversion_geckodriver_url))
+
+    _download_file(maxversion_geckodriver_url, browser="ff")
+
 
 def _internet_explorer_downloader():
     """
