@@ -135,7 +135,7 @@ def _download_file(url, browser="ch"):
             file.write(r.content)
             print("下载成功,{}保存在:{}".format(drivername, os.getcwd()+"\\"+file_name+".zip"))
     except:
-        print("下载失败，请复制上面的驱动地址手动下载!")
+        print("下载失败，请复制上面的驱动地址使用迅雷下载!")
 
 def _init_libs():
     """
