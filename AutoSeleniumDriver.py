@@ -120,13 +120,13 @@ def _download_file(url, browser="ch"):
     """
     if browser == "ch":
         drivername = "谷歌浏览器驱动"
-        file_name = "./chromedriver.zip"
+        file_name = "chromedriver"
     if browser == "ff":
         drivername = "火狐浏览器驱动"
-        file_name = "./geckodriver.zip"
+        file_name = "geckodriver"
     if browser == "ie":
         drivername = "IE浏览器驱动"
-        file_name = "./iedriver.zip"
+        file_name = "iedriver"
 
     print("开始下载{}".format(drivername))
     try:
