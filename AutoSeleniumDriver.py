@@ -225,7 +225,7 @@ def _firefox_downloader():
         火狐驱动下载
     """
     bit = _get_windows_bit()
-    print("当前Windows版本为64位")
+    oprint("当前Windows版本为{}位".format(bit))
 
     res = requests.get("https://github.com/mozilla/geckodriver/releases")
     geckodrivers = re.findall("geckodriver-v(.*?)-win{}.zip".format(bit), res.text)
